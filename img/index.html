@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Vision Électronique - Boutique de téléphones, ordinateurs et accessoires en ligne au meilleur prix en FCFA.">
+  <title>Vision Électronique</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Bouton afficher plus */
+    .load-more-container { text-align: center; margin: 20px 0; }
+    .load-more-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    .load-more-btn:hover { background: #0056b3; }
+
+    /* Produits visibles */
+    .categorie .product-grid .product-card,
+    .products .product-grid .product-card { display: none; }
+    .categorie .product-grid .product-card:nth-child(-n+5),
+    .products .product-grid .product-card:nth-child(-n+5) { display: block; }
+    .product-grid.show-all .product-card { display: block; }
+
+    /* Bannière responsive */
+    .banner-slideshow { position: relative; overflow: hidden; }
+    .banner-slideshow .slide { display: none; position: relative; }
+    .banner-slideshow .slide.active { display: block; }
+    .banner-slideshow .slide img { width: 100%; height: 300px; object-fit: cover; }
+    .banner-slideshow .prev,
+    .banner-slideshow .next { position: absolute; top:50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color:#fff; border:none; padding:8px 12px; cursor:pointer; border-radius:50%; font-size:18px; }
+    .banner-slideshow .prev { left: 10px; }
+    .banner-slideshow .next { right: 10px; }
+
+    /* Effet sélection produit temporaire */
+    .product-card.selected { border: 2px solid #28a745; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); transition: all 0.3s ease; }
+    .product-card button { transition: background-color 0.3s ease; }
+
+    /* Responsive bannière */
+    @media screen and (max-width: 768px){
+      .banner-slideshow .slide img { height: 200px; }
+    }
+    @media screen and (max-width: 480px){
+      .banner-slideshow .slide img { height: 150px; }
+      .banner-slideshow .slide-text h2 { font-size: 16px; }
+      .banner-slideshow .slide-text button { padding: 6px 12px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body id="top">
+
+  <!-- Barre du haut -->
+  <div class="top-bar">
+    <p>Le meilleur site de produits électroniques</p>
+    <div class="account-links">
+      <a href="#" onclick="openLogin()">Connexion</a> | 
+      <a href="#" onclick="openSignup()">Inscription</a> | 
+      <a href="#" id="my-account-link" onclick="openAccount()">Mon compte</a>
+    </div>
+  </div>
+
+  <!-- Logo + Panier -->
+  <div class="logo-bar">
+    <h1 class="logo">Vision Électronique</h1>
+    <div class="cart" id="cart-count">🛒 Mon Panier (0)</div>
+  </div>
+
+  <!-- Menu -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#telephones">Téléphones</a></li>
+        <li><a href="#ordinateurs">Ordinateurs</a></li>
+        <li><a href="#accessoires">Accessoires</a></li>
+        <li><a href="#mon-panier">Panier</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Bannière défilante responsive -->
+  <div class="banner-slideshow">
+    <div class="slide active">
+      <img src="louuu.jpg" alt="Bienvenue chez Vision Électronique">
+      <div class="slide-text">
+        <h2>Bienvenue chez Vision Électronique</h2>
+        <button>Découvrez la technologie de demain, aujourd'hui !</button>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="rrr555.jpg" alt="Smartphones">
+      <div class="slide-text">
+        <h2>Les meilleurs smartphones du moment</h2>
+        <button>Qualité au meilleur prix</button>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="paiement-e-commerce-xeb.jpg" alt="Accessoires">
+      <div class="slide-text">
+        <h2>Des accessoires à prix imbattables</h2>
+        <button>Commandez maintenant</button>
+      </div>
+    </div>
+    <button class="prev" onclick="prevSlide()">&#10094;</button>
+    <button class="next" onclick="nextSlide()">&#10095;</button>
+  </div>
+
+  <!-- ==================== PRODUITS ==================== -->
+  <!-- Nouveautés -->
+  <section class="products">
+    <h3>Nouveautés</h3>
+    <div class="product-grid" id="productGrid">
+      <div class="product-card">
+        <img src="img 1.jpg" alt="Ordinateur HP">
+        <h4>Ordinateur HP</h4>
+        <p>200 000 FCFA</p>
+        <button onclick="addToCart(this)" data-name="Ordinateur HP" data-price="200000">Ajouter au panier</button>
+      </div>
+      <div class="product-card">
+        <img src="img2.png" alt="Iphone 16 pro max">
+        <h4>Iphone 16 pro max</h4>
+        <p>976 000 FCFA</p>
+        <button onclick="addToCart(this)" data-name="Iphone 16 pro max" data-price="976000">Ajouter au panier</button>
+      </div>
+      <div class="product-card">
+        <img src="img3.jpg" alt="Casque Bluetooth connecté noir">
+        <h4>Casque connecté</h4>
+        <p>12 500 FCFA</p>
+        <button onclick="addToCart(this)" data-name="Casque connecté" data-price="12500">Ajouter au panier</button>
+      </div>
+    </div>
+    <div class="load-more-container">
+      <button class="load-more-btn" onclick="afficherPlus(this)">Afficher plus</button>
+    </div>
+  </section>
+
+  <!-- Ordinateurs -->
+  <section class="categorie" id="ordinateurs">
+    <h2>Ordinateurs</h2>  
+    <div class="product-grid">  
+      <div class="product-card">  
+        <img src="ordinateur-assemblé-1.jpg" alt="Ordinateur bureautique" />  
+        <h4>Ordinateur bureautique</h4>  
+        <p>200 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="Ordinateur bureautique" data-price="200000">Ajouter au panier</button>  
+      </div>
+      <div class="product-card">  
+        <img src="buro.jpg" alt="Ordinateur" />  
+        <h4>Ordinateur</h4>  
+        <p>200 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="Ordinateur" data-price="200000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="HP-EliteBook-850-G6-4.jpeg" alt="HP EliteBook i7" />  
+        <h4>HP EliteBook i7</h4>  
+        <p>300 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="HP EliteBook i7" data-price="300000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="HP.jpg" alt="HP EliteBook i5" />  
+        <h4>HP EliteBook i5</h4>  
+        <p>130 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="HP EliteBook i5" data-price="130000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="macbookpro2012.jpg" alt="MacBook" />  
+        <h4>MacBook</h4>  
+        <p>150 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="MacBook" data-price="150000">Ajouter au panier</button>  
+      </div>
+    </div>
+    <div class="load-more-container">
+      <button class="load-more-btn" onclick="afficherPlus(this)">Afficher plus</button>
+    </div>
+  </section> 
+
+  <!-- Téléphones -->
+  <section class="categorie" id="telephones">
+    <h2>Smartphones</h2>  
+    <div class="product-grid">  
+      <div class="product-card">  
+        <img src="iphone 16.jpg" alt="iPhone 16" />  
+        <h4>iPhone 16</h4>  
+        <p>600 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="iPhone 16" data-price="600000">Ajouter au panier</button>  
+      </div>
+      <div class="product-card">  
+        <img src="iphone 15.jpg" alt="iPhone 15" />  
+        <h4>iPhone 15</h4>  
+        <p>470 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="iPhone 15" data-price="470000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="s23 ultra.jpg" alt="Samsung S23 Ultra" />  
+        <h4>Samsung S23 Ultra</h4>  
+        <p>670 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="Samsung S23 Ultra" data-price="670000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="tecno pop.jpeg" alt="Tecno Pop 10" />  
+        <h4>Tecno Pop 10</h4>  
+        <p>70 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="Tecno Pop 10" data-price="70000">Ajouter au panier</button>  
+      </div>  
+      <div class="product-card">  
+        <img src="techno spark 30 c.webp" alt="Tecno Spark 30" />  
+        <h4>Tecno Spark 30</h4>  
+        <p>70 000 FCFA</p>  
+        <button onclick="addToCart(this)" data-name="Tecno Spark 30" data-price="70000">Ajouter au panier</button>  
+      </div>
+    </div>
+    <div class="load-more-container">
+      <button class="load-more-btn" onclick="afficherPlus(this)">Afficher plus</button>
+    </div>
+  </section>
+
+<!-- Accessoires -->
+<section class="categorie" id="accessoires">
+  <h2>Accessoires</h2>
+  <div class="product-grid">
+    <div class="product-card">
+      <img src="type c.webp" alt="Chargeur Type-C" />
+      <h4>Chargeur Type-C</h4>
+      <p>2 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Chargeur Type-C" data-price="2000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="power bank.jpg" alt="Power Bank 20 000" />
+      <h4>Power Bank 20 000</h4>
+      <p>12 500 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Power Bank 20 000" data-price="12500">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="watch-og.jpeg" alt="Montre OG" />
+      <h4>Montre OG</h4>
+      <p>7 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Montre OG" data-price="7000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="watch.jpg" alt="Montre connectée" />
+      <h4>Montre connectée</h4>
+      <p>5 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Montre connectée" data-price="5000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="galaxy-buds3-pro-new-design-video-endframe-mo.jpg" alt="Galaxy Buds 3" />
+      <h4>Galaxy Buds 3</h4>
+      <p>7 500 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Galaxy Buds 3" data-price="7500">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="Clavier-1.jpg" alt="Clavier" />
+      <h4>Clavier</h4>
+      <p>1 200 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Clavier" data-price="1200">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="EPI-PH-PB08-SG-02.jpg" alt="Power Bank iPhone" />
+      <h4>Power Bank iPhone</h4>
+      <p>7 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Power Bank iPhone" data-price="7000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="incassable.jpg" alt="Coque incassable" />
+      <h4>Coque incassable</h4>
+      <p>1 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Coque incassable" data-price="1000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="WhatsApp Image 2025-07-17 à 14.27.02_00d206e7.jpg" alt="Écouteurs" />
+      <h4>Écouteurs</h4>
+      <p>1 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Écouteurs" data-price="1000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="WhatsApp Image 2025-07-17 à 14.27.02_16bbd263.jpg" alt="Lampe LED" />
+      <h4>Lampe LED</h4>
+      <p>5 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Lampe LED" data-price="5000">Ajouter au panier</button>
+    </div>
+    <div class="product-card">
+      <img src="WhatsApp Image 2025-07-17 à 14.27.02_c784c0de.jpg" alt="Adaptateur" />
+      <h4>Adaptateur</h4>
+      <p>1 000 FCFA</p>
+      <button onclick="addToCart(this)" data-name="Adaptateur" data-price="1000">Ajouter au panier</button>
+    </div>
+  </div>
+  <div class="load-more-container">
+    <button class="load-more-btn" onclick="afficherPlus(this)">Afficher plus</button>
+  </div>
+</section>
+
+
+
+  <!-- Panier -->
+  <section class="panier" id="mon-panier">
+    <h2>Votre Panier</h2>
+    <div class="cart cart-second">🛒 Mon Panier (0)</div>
+    <ul id="cart-items"></ul>
+    <p>Total : <span id="cart-total">0 FCFA</span></p>
+    <a href="paiement.html"><button class="btn-payer">Procéder au paiement</button></a>
+    <button class="btn-vider" onclick="viderPanier()">Vider le panier</button>
+  </section>
+
+  <!-- ================== MODALES CONNEXION / INSCRIPTION / MON COMPTE ================== -->
+  <div id="modal-overlay" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;">
+    
+    <!-- Connexion -->
+    <div id="login-modal" style="display:none; background:#fff; padding:30px; border-radius:10px; width:300px; max-width:90%; margin:100px auto; position:relative;">
+      <h3>Connexion</h3>
+      <input type="text" id="login-username" placeholder="Nom d'utilisateur" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <input type="password" id="login-password" placeholder="Mot de passe" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <button onclick="login()" style="padding:10px 20px;background:#007bff;color:#fff;border:none;border-radius:5px;cursor:pointer;">Se connecter</button>
+      <p style="margin-top:10px;">Pas encore inscrit ? <a href="#" onclick="openSignup()">Inscription</a></p>
+      <span onclick="closeModal()" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:18px;">&times;</span>
+    </div>
+
+    <!-- Inscription -->
+    <div id="signup-modal" style="display:none; background:#fff; padding:30px; border-radius:10px; width:300px; max-width:90%; margin:100px auto; position:relative;">
+      <h3>Inscription</h3>
+      <input type="text" id="signup-username" placeholder="Nom d'utilisateur" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <input type="password" id="signup-password" placeholder="Mot de passe" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <input type="tel" id="signup-phone" placeholder="Numéro de téléphone" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <input type="email" id="signup-email" placeholder="Adresse e-mail" style="width:100%;padding:8px;margin:8px 0;"><br>
+      <button onclick="signup()" style="padding:10px 20px;background:#28a745;color:#fff;border:none;border-radius:5px;cursor:pointer;">S'inscrire</button>
+      <p style="margin-top:10px;">Déjà inscrit ? <a href="#" onclick="openLogin()">Connexion</a></p>
+      <span onclick="closeModal()" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:18px;">&times;</span>
+    </div>
+
+    <!-- Mon Compte -->
+    <div id="account-modal" style="display:none; background:#fff; padding:30px; border-radius:10px; width:300px; max-width:90%; margin:100px auto; position:relative;">
+      <h3>Mon compte</h3>
+      <p><strong>Nom d'utilisateur :</strong> <span id="account-username-modal"></span></p>
+      <p><strong>Email :</strong> <span id="account-email-modal"></span></p>
+      <p><strong>Téléphone :</strong> <span id="account-phone-modal"></span></p>
+      <p><strong>Mot de passe :</strong> <span id="account-password-modal">••••••••</span>
+        <button onclick="togglePasswordModal()" style="margin-left:10px; padding:2px 5px;">Afficher</button>
+      </p>
+      <button onclick="logout()" style="padding:8px 15px; background:#dc3545; color:#fff; border:none; border-radius:5px; cursor:pointer;">Se déconnecter</button>
+      <span onclick="closeModal()" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:18px;">&times;</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background:#007bff; color:#fff; padding:40px 20px; margin-top:50px;">
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px;">
+      <div>
+        <h3>À propos de nous</h3>
+        <p>Vision Électronique est votre boutique en ligne spécialisée dans la vente de téléphones, ordinateurs et accessoires de qualité au meilleur prix en FCFA.</p>
+      </div>
+      <div>
+        <h3>Service Client</h3>
+        <p>📞 89 76 20 56</p>
+        <p>📞 94 80 88 51</p>
+        <p>Disponible 7j/7 de 8h à 22h</p>
+      </div>
+      <div>
+        <h3>Contactez-nous</h3>
+        <p>
+          📧 <a href="mailto:visionelectronique223@gmail.com" style="color:#fff; text-decoration:none;">visionelectronique223@gmail.com</a><br>
+          <a href="https://wa.me/22389762056" target="_blank" style="color:#fff; text-decoration:none;">WhatsApp 89 76 20 56</a><br>
+          <a href="https://wa.me/22394808851" target="_blank" style="color:#fff; text-decoration:none;">WhatsApp 94 80 88 51</a>
+        </p>
+        <p><a href="https://www.instagram.com/ton_compte" target="_blank" style="color:#fff; text-decoration:none;">Instagram</a></p>
+      </div>
+      <div>
+        <h3>Laissez votre avis</h3>
+        <form>
+          <textarea placeholder="Écrivez votre avis..." rows="4" style="width:100%; padding:8px;"></textarea>
+          <button type="submit" style="margin-top:5px; padding:8px 12px; background:#fff; color:#007bff; border:none; border-radius:5px;">Envoyer</button>
+        </form>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:20px;">© 2025 Vision Électronique - Tous droits réservés</p>
+  </footer>
+
+  <!-- ================== JAVASCRIPT ================== -->
+  <script>
+    let currentUser = null;
+
+    function openLogin() {
+      document.getElementById("modal-overlay").style.display = "block";
+      document.getElementById("login-modal").style.display = "block";
+      document.getElementById("signup-modal").style.display = "none";
+      document.getElementById("account-modal").style.display = "none";
+    }
+
+    function openSignup() {
+      document.getElementById("modal-overlay").style.display = "block";
+      document.getElementById("signup-modal").style.display = "block";
+      document.getElementById("login-modal").style.display = "none";
+      document.getElementById("account-modal").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("modal-overlay").style.display = "none";
+      document.getElementById("login-modal").style.display = "none";
+      document.getElementById("signup-modal").style.display = "none";
+      document.getElementById("account-modal").style.display = "none";
+    }
+
+    function signup() {
+      const username = document.getElementById("signup-username").value.trim();
+      const password = document.getElementById("signup-password").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const phone = document.getElementById("signup-phone").value.trim();
+
+      if(!username || !password || !email || !phone){
+        alert("Veuillez remplir tous les champs");
+        return;
+      }
+
+      localStorage.setItem("user-"+username, JSON.stringify({password, email, phone}));
+      alert("Inscription réussie !");
+      openLogin();
+    }
+
+    function login() {
+      const username = document.getElementById("login-username").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      const stored = JSON.parse(localStorage.getItem("user-"+username));
+      if(stored && stored.password === password){
+        currentUser = { username, ...stored };
+        alert("Connexion réussie !");
+        closeModal();
+        showAccountMenu();
+      } else {
+        alert("Nom d'utilisateur ou mot de passe incorrect");
+      }
+    }
+
+    function showAccountMenu() {
+      const accountLinks = document.querySelector(".account-links");
+      accountLinks.innerHTML = `
+        Bonjour, ${currentUser.username} | 
+        <a href="#" onclick="openAccount()">Mon compte</a> | 
+        <a href="#" onclick="logout()">Se déconnecter</a>
+      `;
+    }
+
+    function openAccount() {
+      if(!currentUser){ alert("Vous devez vous connecter"); return; }
+
+      // Remplir les infos de la modale
+      document.getElementById("account-username-modal").textContent = currentUser.username;
+      document.getElementById("account-email-modal").textContent = currentUser.email;
+      document.getElementById("account-phone-modal").textContent = currentUser.phone;
+      document.getElementById("account-password-modal").textContent = "••••••••"; // Masqué par défaut
+
+      // Afficher la modale
+      document.getElementById("modal-overlay").style.display = "block";
+      document.getElementById("account-modal").style.display = "block";
+
+      // Masquer les autres modales si ouvertes
+      document.getElementById("login-modal").style.display = "none";
+      document.getElementById("signup-modal").style.display = "none";
+    }
+
+    function togglePasswordModal(){
+      const pwdSpan = document.getElementById("account-password-modal");
+      if(pwdSpan.textContent === "••••••••"){
+        pwdSpan.textContent = currentUser.password;
+      } else {
+        pwdSpan.textContent = "••••••••";
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      const accountLinks = document.querySelector(".account-links");
+      accountLinks.innerHTML = `
+        <a href="#" onclick="openLogin()">Connexion</a> | 
+        <a href="#" onclick="openSignup()">Inscription</a> | 
+        <a href="#" id="my-account-link" onclick="openAccount()">Mon compte</a>
+      `;
+      closeModal();
+    }
+
+    // ==================== Bannière ====================
+    let slideIndex = 0;
+    function showSlides() {
+      const slides = document.querySelectorAll(".banner-slideshow .slide");
+      slides.forEach(s => s.classList.remove("active"));
+      slides[slideIndex].classList.add("active");
+    }
+    function nextSlide() { slideIndex = (slideIndex+1)%document.querySelectorAll(".banner-slideshow .slide").length; showSlides(); }
+    function prevSlide() { slideIndex = (slideIndex-1+document.querySelectorAll(".banner-slideshow .slide").length)%document.querySelectorAll(".banner-slideshow .slide").length; showSlides(); }
+    setInterval(nextSlide, 5000);
+    showSlides();
+
+    // ==================== Panier ====================
+    let cart = [];
+function addToCart(button){
+  const name = button.getAttribute("data-name");
+  const price = parseInt(button.getAttribute("data-price"));
+
+  // Vérifier si le produit est déjà dans le panier
+  const existing = cart.find(item => item.name === name);
+  if(existing){
+    existing.quantity += 1; // augmenter la quantité
+  } else {
+    cart.push({name, price, quantity: 1}); // nouveau produit
+  }
+
+  updateCart();
+
+  // Effet visuel temporaire
+  button.parentElement.classList.add("selected");
+  setTimeout(()=>button.parentElement.classList.remove("selected"),500);
+}
+
+function updateCart(){
+  document.getElementById("cart-count").textContent = `🛒 Mon Panier (${cart.length})`;
+  const cartItems = document.getElementById("cart-items");
+  cartItems.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${item.quantity > 1 ? 'x' + item.quantity + ' ' : ''}${item.name} - ${item.price} FCFA 
+      <button onclick="supprimerProduit(${index})" style="margin-left:10px; color:red; cursor:pointer;">supprimer</button>
+    `;
+    cartItems.appendChild(li);
+    total += item.price * item.quantity;
+  });
+
+  document.getElementById("cart-total").textContent = `${total} FCFA`;
+
+  // 🔹 Sauvegarde dans localStorage
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+
+function supprimerProduit(index){
+  cart.splice(index, 1); // supprime l'élément
+  updateCart(); // met à jour l'affichage
+}
+
+    function viderPanier(){ cart=[]; updateCart(); }
+
+    // ==================== Afficher plus ====================
+function afficherPlus(btn){
+  const section = btn.closest(".categorie, .products");
+  const grid = section.querySelector(".product-grid");
+  if(grid.classList.contains("show-all")){
+    grid.classList.remove("show-all");
+    btn.textContent = "Afficher plus";
+  } else {
+    grid.classList.add("show-all");
+    btn.textContent = "Afficher moins";
+  }
+}
+
+  </script>
+</body>
+</html>

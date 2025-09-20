@@ -1,0 +1,144 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Vision Électronique - Boutique de téléphones, ordinateurs et accessoires en ligne au meilleur prix en FCFA.">
+  <title>Vision Électronique</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body id="top">
+  <!-- ... TOUT TON CONTENU HTML EST PRÉSERVÉ ... -->  <!-- Connexion / Inscription Firebase uniquement -->  <div id="auth-section">
+    <h2>Connexion / Inscription</h2>
+    <input type="email" id="auth-email" placeholder="Email" required>
+    <input type="password" id="auth-password" placeholder="Mot de passe" required>
+    <br>
+    <button onclick="inscrire()">S'inscrire</button>
+    <button onclick="connecter()">Se connecter</button>
+    <button onclick="deconnecter()">Se déconnecter</button>
+    <p id="auth-message"></p>
+  </div>  <!-- Firebase SDK -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDJJX9UHP-_oy5D4rbJvICz7jlR9qFMpcM",
+      authDomain: "vision-electronique.firebaseapp.com",
+      projectId: "vision-electronique",
+      storageBucket: "vision-electronique.appspot.com",
+      messagingSenderId: "939630701290",
+      appId: "1:939630701290:web:78aecebe45bc208189a5a2"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    function inscrire() {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          document.getElementById("auth-message").innerText = "Inscription réussie ✅";
+          console.log("Inscription OK :", userCredential.user.email);
+        })
+        .catch((error) => {
+          document.getElementById("auth-message").innerText = "Erreur : " + error.message;
+        });
+    }
+
+    function connecter() {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          document.getElementById("auth-message").innerText = "Connexion réussie ✅";
+          console.log("Connecté :", userCredential.user.email);
+        })
+        .catch((error) => {
+          document.getElementById("auth-message").innerText = "Erreur : " + error.message;
+        });
+    }
+
+    function deconnecter() {
+      firebase.auth().signOut()
+        .then(() => {
+          document.getElementById("auth-message").innerText = "Déconnecté ✅";
+        })
+        .catch((error) => {
+          document.getElementById("auth-message").innerText = "Erreur : " + error.message;
+        });
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Utilisateur connecté :", user.email);
+      } else {
+        console.log("Aucun utilisateur connecté.");
+      }
+    });
+  </script>  <!-- Script panier et slideshow -->  <script>
+    let slides = document.querySelectorAll(".banner-slideshow .slide");
+    let index = 0;
+    setInterval(() => {
+      slides[index].classList.remove("active");
+      index = (index + 1) % slides.length;
+      slides[index].classList.add("active");
+    }, 5000);
+
+    let count = 0;
+    let total = 0;
+    const cartList = document.getElementById("cart-items");
+    const cartTotal = document.getElementById("cart-total");
+
+    function addToCart(button) {
+      const nomProduit = button.dataset.name;
+      const prix = parseInt(button.dataset.price);
+
+      count++;
+      total += prix;
+
+      const li = document.createElement("li");
+      li.textContent = ${nomProduit} - ${prix.toLocaleString()} FCFA;
+      cartList.appendChild(li);
+
+      cartTotal.textContent = total.toLocaleString() + " FCFA";
+      document.getElementById("cart-count").textContent = 🛒 Mon Panier (${count});
+      const cartSecond = document.querySelector(".cart-second");
+      if (cartSecond) cartSecond.textContent = 🛒 Mon Panier (${count});
+
+      let panier = JSON.parse(localStorage.getItem("panier")) || [];
+      panier.push({ nom: nomProduit, prix: prix });
+      localStorage.setItem("panier", JSON.stringify(panier));
+
+      alert(${nomProduit} ajouté au panier !);
+    }
+
+    function viderPanier() {
+      if (confirm("Voulez-vous vraiment vider le panier ?")) {
+        cartList.innerHTML = "";
+        total = 0;
+        count = 0;
+        cartTotal.textContent = "0 FCFA";
+        document.getElementById("cart-count").textContent = "🛒 Mon Panier (0)";
+        const cartSecond = document.querySelector(".cart-second");
+        if (cartSecond) cartSecond.textContent = "🛒 Mon Panier (0)";
+        localStorage.removeItem("panier");
+      }
+    }
+
+    function payer() {
+      const panier = JSON.parse(localStorage.getItem("panier")) || [];
+
+      if (panier.length === 0) {
+        alert("Votre panier est vide.");
+        return;
+      }
+
+      let message = "Bonjour, je souhaite commander les articles suivants :%0A";
+      panier.forEach((item, index) => {
+        message += ${index + 1}. ${item.nom} - ${item.prix.toLocaleString()} FCFA%0A;
+      });
+      message += %0ATotal: ${total.toLocaleString()} FCFA;
+
+      const numeroWhatsApp = "91286837";
+      const lien = https://wa.me/${numeroWhatsApp}?text=${message};
+      window.open(lien, "_blank");
+    }
+  </script></body>
+</html>
